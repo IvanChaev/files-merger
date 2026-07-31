@@ -22,10 +22,9 @@
 
 ## Установка
 
-```bash
-git clone https://github.com/username/folder-merger.git
-cd folder-merger
-```
+1) Перейдите на страницу релизов и скачайте от туда или перейдите по ссылке и скачайте [последнюю версию](https://github.com/IvanChaev/files-merger/archive/refs/tags/v1.0.0.zip)
+2) Распакуйте архив в удобную место
+3) Запустите .bat файл
 
 ## Запуск
 
