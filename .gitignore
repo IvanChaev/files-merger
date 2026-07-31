@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+
+# Virtual environment
+venv/
+.venv/
+
+# IDE
+.vscode/
+.idea/
+
+# Project logs
+logs/
+
+# Merged output files
+dumps/
+*.part
+
+# User config (contains local paths)
+config/settings.json
+config/settings.json.bak
+config/local_exceptions.json
+
+# OS
+Thumbs.db
+.DS_Store
