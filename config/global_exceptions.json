@@ -1,0 +1,46 @@
+[
+    {
+        "name": "logs",
+        "enabled": true
+    },
+    {
+        "name": "dumps",
+        "enabled": true
+    },
+    {
+        "name": "__pycache__",
+        "enabled": true
+    },
+    {
+        "name": ".git",
+        "enabled": true
+    },
+    {
+        "name": "node_modules",
+        "enabled": true
+    },
+    {
+        "name": "*.tmp",
+        "enabled": true
+    },
+    {
+        "name": "*.log",
+        "enabled": true
+    },
+    {
+        "name": "Thumbs.db",
+        "enabled": true
+    },
+    {
+        "name": ".DS_Store",
+        "enabled": true
+    },
+    {
+        "name": ".gitignore",
+        "enabled": true
+    },
+    {
+        "name": "*.md",
+        "enabled": true
+    }
+]
