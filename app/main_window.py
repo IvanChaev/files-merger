@@ -120,12 +120,10 @@ class MainWindow:
         self.dir_entry.bind("<Return>", lambda e: self._commit_dir())
         self.dir_entry.bind("<FocusOut>", lambda e: self._commit_dir())
 
-        self.btn_open_folder = ttk.Button(dir_frame, text="Открыть папку", command=self._open_selected_folder, width=14)
-        self.btn_open_folder.grid(row=0, column=1, padx=(0, 5))
         self.btn_browse_dir = ttk.Button(dir_frame, text="Выбрать", command=self._browse_dir, width=10)
-        self.btn_browse_dir.grid(row=0, column=2, padx=(0, 5))
+        self.btn_browse_dir.grid(row=0, column=1, padx=(0, 5))
         self.btn_open_dumps = ttk.Button(dir_frame, text="К объединённым", command=self._open_dumps, width=18)
-        self.btn_open_dumps.grid(row=0, column=3)
+        self.btn_open_dumps.grid(row=0, column=2)
 
         ttk.Label(main_frame, text="Выходной файл:").grid(row=3, column=0, sticky=tk.W, pady=(0, 5))
         out_frame = ttk.Frame(main_frame)
@@ -240,11 +238,6 @@ class MainWindow:
     def _open_dumps(self):
         os.makedirs(DUMPS_DIR, exist_ok=True)
         subprocess.Popen(["explorer", DUMPS_DIR])
-
-    def _open_selected_folder(self):
-        path = self.dir_path.get().strip()
-        if os.path.isdir(path):
-            subprocess.Popen(["explorer", path])
 
     def _set_default_out_path(self):
         os.makedirs(DUMPS_DIR, exist_ok=True)
@@ -396,7 +389,6 @@ class MainWindow:
         self.history_combo.config(state="readonly")
         self.btn_history_delete.config(state="normal")
         self.dir_entry.config(state="normal")
-        self.btn_open_folder.config(state="normal")
         self.btn_browse_dir.config(state="normal")
         self.btn_open_dumps.config(state="normal")
         self.btn_save_as.config(state="normal")
@@ -460,7 +452,6 @@ class MainWindow:
         self.history_combo.config(state="disabled")
         self.btn_history_delete.config(state="disabled")
         self.dir_entry.config(state="disabled")
-        self.btn_open_folder.config(state="disabled")
         self.btn_browse_dir.config(state="disabled")
         self.btn_open_dumps.config(state="disabled")
         self.btn_save_as.config(state="disabled")
