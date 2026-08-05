@@ -38,3 +38,7 @@ def setup_dark_style(root):
     style.configure("Horizontal.TProgressbar", background=DARK_SELECT, troughcolor=DARK_FRAME)
     style.configure("Vertical.TScrollbar", background=DARK_SCROLLBAR, troughcolor=DARK_FRAME,
                      arrowcolor=DARK_FG)
+    style.configure("TCheckbutton", background=DARK_FRAME, foreground=DARK_FG, focuscolor=DARK_FRAME)
+    style.map("TCheckbutton",
+              background=[("active", DARK_FRAME)],
+              foreground=[("disabled", DARK_DISABLED_FG)])

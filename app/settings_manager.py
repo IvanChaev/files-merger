@@ -31,6 +31,7 @@ class SettingsManager:
         self.current_folder = ""
         self.last_folder = ""
         self.folder_history = []
+        self.copy_to_clipboard = False
         self.all_exceptions = {}
         self.global_exceptions = []
         self._load_failed = False
@@ -306,6 +307,8 @@ class SettingsManager:
                         seen.add(pk)
                         deduped.append(p)
                 self.folder_history = deduped
+            val = data.get("copy_to_clipboard", False)
+            self.copy_to_clipboard = bool(val) if isinstance(val, bool) else False
             return True
         except Exception as e:
             log.warning("Failed to load from %s: %s", path, e)
@@ -321,6 +324,7 @@ class SettingsManager:
             data = {
                 "last_folder": self.last_folder,
                 "folder_history": self.folder_history,
+                "copy_to_clipboard": self.copy_to_clipboard,
             }
             tmp = self.settings_path + ".tmp"
             bak = self.settings_path + ".bak"

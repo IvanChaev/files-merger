@@ -58,6 +58,7 @@ class MainWindow:
         self._excluded_preview_running = False
         self._excluded_preview_pending = False
         self._exceptions_window = None
+        self._out_path_manual = False
         self._build_ui()
         self._setup_drag()
         self._poll_worker()
@@ -68,6 +69,8 @@ class MainWindow:
             self._update_history()
             self._update_exception_count()
             self._update_excluded_preview()
+            if not self._out_path_manual:
+                self._set_default_out_path()
             log.info("Restored folder: %s", self.settings.current_folder)
 
         log.info("MainWindow initialized")
@@ -148,6 +151,13 @@ class MainWindow:
         self.btn_exceptions = ttk.Button(btn_frame, text="Настроить исключения", command=self._open_exceptions, width=26)
         self.btn_exceptions.pack(side=tk.LEFT)
 
+        self.copy_clipboard_var = tk.BooleanVar(value=self.settings.copy_to_clipboard)
+        self.chk_copy_clipboard = ttk.Checkbutton(
+            btn_frame, text="Копировать в буфер обмена",
+            variable=self.copy_clipboard_var,
+            command=self._toggle_copy_clipboard)
+        self.chk_copy_clipboard.pack(side=tk.LEFT, padx=(12, 0))
+
         self.exception_count_var = tk.StringVar(value="")
         self.exception_count_label = ttk.Label(main_frame, textvariable=self.exception_count_var,
                                                 foreground="#ffd700", font=("Consolas", 9))
@@ -217,6 +227,8 @@ class MainWindow:
             if not self.settings.set_current_folder(path):
                 messagebox.showwarning("Ошибка сохранения",
                     "Не удалось сохранить настройки.\nПроверьте права доступа к папке config.")
+            if not self._out_path_manual:
+                self._set_default_out_path()
             self._update_history()
             self._update_exception_count()
             self._update_excluded_preview()
@@ -232,6 +244,7 @@ class MainWindow:
             title="Сохранить как", defaultextension=".txt",
             filetypes=[("Текстовые файлы", "*.txt"), ("Все файлы", "*.*")])
         if path:
+            self._out_path_manual = True
             self.out_path.set(path)
             self._run_merge()
 
@@ -241,8 +254,9 @@ class MainWindow:
 
     def _set_default_out_path(self):
         os.makedirs(DUMPS_DIR, exist_ok=True)
+        folder = os.path.basename(self.dir_path.get().strip().rstrip("\\/")) or "dump"
         ts = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S-%f")
-        self.out_path.set(os.path.join(DUMPS_DIR, f"{ts}.txt"))
+        self.out_path.set(os.path.join(DUMPS_DIR, f"{folder}_{ts}.txt"))
 
     def _update_excluded_preview(self):
         source = self.dir_path.get().strip()
@@ -342,6 +356,13 @@ class MainWindow:
         except Exception:
             pass
 
+    def _toggle_copy_clipboard(self):
+        self.settings.copy_to_clipboard = bool(self.copy_clipboard_var.get())
+        if not self.settings._save():
+            messagebox.showwarning("Ошибка сохранения",
+                "Не удалось сохранить настройки.\nПроверьте права доступа к папке config.")
+        log.info("Copy to clipboard set to: %s", self.settings.copy_to_clipboard)
+
     def _on_success(self, count, output, walk_errors, excluded_counts):
         self._excluded_count = excluded_counts["total"]
         self._excluded_counts = excluded_counts
@@ -356,6 +377,19 @@ class MainWindow:
         log.info("Merge success: written=%d excluded=%d global=%d local=%d errors=%d",
                  count, excluded_counts["total"], excluded_counts["global"],
                  excluded_counts["local"], len(walk_errors))
+        if self.settings.copy_to_clipboard and os.path.exists(output):
+            try:
+                with open(output, "rb") as f:
+                    content = f.read()
+                text = content.decode("utf-8", errors="replace")
+                self.root.clipboard_clear()
+                self.root.clipboard_append(text)
+                self.root.update()
+                log.info("Copied output text to clipboard (%d chars)", len(text))
+                msg += "\n\nТекст скопирован в буфер обмена."
+            except Exception as e:
+                log.warning("Failed to copy output to clipboard: %s", e)
+                msg += "\n\nНе удалось скопировать текст в буфер обмена."
         if walk_errors:
             err_preview = "\n".join(walk_errors[:10])
             if len(walk_errors) > 10:
